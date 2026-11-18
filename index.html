@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#111415">
+  <meta name="description" content="在瀏覽器分析音訊節拍、校正 BPM，排出你的下一份歌單。音檔不離開裝置。">
+  <title>Beat Desk｜節拍工作台</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M7 13v6m4-10v14m5-18v22m5-16v10m4-7v4" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></svg>
+        <span>Beat Desk</span>
+      </div>
+      <div class="privacy-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3M6 10h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm6 5v2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> 只在此裝置處理</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow"><span class="indicator"></span> AUDIO TOOLS / 09</p>
+        <h1 id="page-title">節拍工作台<span>.</span></h1>
+        <p class="intro">找出節拍、用耳朵校正，再把曲目排成一組。</p>
+      </div>
+      <div class="import-group">
+        <label class="button primary file-button">
+          <input id="file" type="file" accept="audio/*,.wav,.mp3,.m4a,.aac,.ogg,.flac,.opus,.aiff" multiple aria-label="匯入本機音檔">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>匯入音檔
+        </label>
+        <button id="demos" type="button" class="button neutral">試聽示範</button>
+        <p id="progress" class="import-status" role="status">限有權處理的音檔，每首 32 MiB、5 分鐘內。</p>
+      </div>
+    </section>
+
+    <div class="desk">
+      <section class="panel analyzer" aria-labelledby="analyzer-heading">
+        <div class="panel-header">
+          <div><p class="eyebrow muted">01 / ANALYSIS</p><h2 id="analyzer-heading">節拍分析</h2></div>
+          <div class="chip"><span class="indicator"></span> 本機解碼</div>
+        </div>
+        <div class="monitor">
+          <div class="monitor-head">
+            <div class="track-readout">
+              <p class="eyebrow muted">NOW ANALYZING</p>
+              <p id="title">尚未選取曲目</p>
+            </div>
+            <div class="tempo-display"><strong id="bpm">—</strong><span>BPM</span></div>
+          </div>
+          <div class="scope">
+            <canvas id="wave" role="img" aria-label="音訊振幅波形"></canvas>
+            <span class="scope-empty" aria-hidden="true"></span>
+          </div>
+          <div class="transport">
+            <button id="play" class="button neutral" type="button" disabled>播放</button>
+            <p id="status" role="status">匯入音檔或載入示範以開始分析。</p>
+            <span id="duration">—</span>
+          </div>
+        </div>
+        <section class="tuning" aria-labelledby="tuning-heading">
+          <div>
+            <h3 id="tuning-heading">用耳朵校正</h3>
+            <p class="hint">同一段節奏可能聽成半速或倍速。跟拍，或直接輸入你要採用的速度。</p>
+          </div>
+          <div class="correction">
+            <button id="half" type="button" class="button neutral" disabled>½ 半速</button>
+            <button id="double" type="button" class="button neutral" disabled>2× 倍速</button>
+            <button id="tap" type="button" class="button neutral" disabled>Tap 跟拍</button>
+          </div>
+          <div class="manual">
+            <label>手動 BPM<input id="manual" type="number" min="20" max="400" step="0.1" inputmode="decimal" placeholder="例如 120" disabled></label>
+            <button id="apply" type="button" class="button primary" disabled>套用 BPM</button>
+          </div>
+        </section>
+      </section>
+      <section class="panel organizer" aria-labelledby="organizer-heading">
+        <div class="panel-header">
+          <div><p class="eyebrow muted">02 / SET LIST</p><h2 id="organizer-heading">歌單編排</h2></div>
+          <button id="exportBtn" class="button neutral" type="button" disabled>匯出 CSV</button>
+        </div>
+        <div class="list-controls">
+          <label for="sort">曲目順序</label>
+          <select id="sort">
+            <option value="manual">手動順序</option>
+            <option value="bpm">BPM 由低到高</option>
+            <option value="gap">縮小相鄰 BPM 落差</option>
+          </select>
+        </div>
+        <ol id="list" aria-label="曲目清單"><li class="empty-list">歌單目前是空的。匯入音檔或試聽示範，即可開始安排曲目。</li></ol>
+        <fieldset class="track-fields">
+          <legend>曲目筆記</legend>
+          <div class="field-grid">
+            <label>曲名<input id="trackTitle" type="text" maxlength="200" placeholder="尚未選取曲目" disabled></label>
+            <label>起播點（秒）<input id="start" type="number" min="0" step="0.1" inputmode="decimal" placeholder="0" disabled></label>
+          </div>
+          <label>備註<textarea id="notes" rows="2" maxlength="2000" placeholder="例如：跑步暖身後接這首" disabled></textarea></label>
+        </fieldset>
+        <button id="clearBtn" type="button" class="button text-button" disabled>清空歌單</button>
+      </section>
+    </div>
+
+    <footer>
+      <div><span class="footer-dot"></span><strong>音檔不會上傳</strong><p>瀏覽器只保留曲目資訊，不保存音訊。重新整理頁面後，需要重新載入音檔才能試聽。</p></div>
+      <div><strong>節拍是估計值</strong><p>最多分析前 60 秒。規律度反映拍點間隔的一致性，不是答對機率。片段短、節拍弱或速度變動時，請用跟拍或手動輸入確認。速度接近不代表調性相容。</p></div>
+    </footer>
+  </main>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>
